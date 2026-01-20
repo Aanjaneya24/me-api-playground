@@ -1,44 +1,29 @@
-/**
- * Profile API Routes
- * Handles all profile-related endpoints including CRUD operations and queries
- */
-
 const express = require('express');
 const router = express.Router();
 const { dbAll, dbGet, dbRun, dbTransaction, getDB } = require('../db');
 
-/**
- * GET /api/profile
- * Retrieve complete profile with all related data
- */
 router.get('/profile', async (req, res) => {
   try {
-    // Get main profile
     const profile = await dbGet('SELECT * FROM profile WHERE id = 1');
     
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
     }
     
-    // Get skills
     const skills = await dbAll('SELECT skill_name FROM skills WHERE profile_id = ?', [profile.id]);
     
-    // Get projects
     const projects = await dbAll(
       'SELECT id, title, description, link FROM projects WHERE profile_id = ?',
       [profile.id]
     );
     
-    // Get work experience
     const work = await dbAll(
       'SELECT company, position, duration, description FROM work WHERE profile_id = ?',
       [profile.id]
     );
     
-    // Get links
     const links = await dbGet('SELECT github, linkedin, portfolio FROM links WHERE profile_id = ?', [profile.id]);
     
-    // Construct response
     const response = {
       name: profile.name,
       email: profile.email,
@@ -56,20 +41,14 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-/**
- * POST /api/profile
- * Create a new profile (for initial setup)
- */
 router.post('/profile', async (req, res) => {
   try {
     const { name, email, education, skills, projects, work, links } = req.body;
     
-    // Validate required fields
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
     
-    // Check if profile already exists
     const existing = await dbGet('SELECT id FROM profile WHERE id = 1');
     if (existing) {
       return res.status(400).json({ error: 'Profile already exists. Use PUT to update.' });
@@ -81,18 +60,15 @@ router.post('/profile', async (req, res) => {
     try {
       db.run('BEGIN TRANSACTION');
       
-      // Insert profile
       const stmt = db.prepare('INSERT INTO profile (name, email, education) VALUES (?, ?, ?)');
       stmt.run([name, email, education || '']);
       stmt.free();
       
-      // Get profile ID
       const idStmt = db.prepare('SELECT last_insert_rowid() as id');
       idStmt.step();
       const profileId = idStmt.getAsObject().id;
       idStmt.free();
       
-      // Insert skills
       if (skills && Array.isArray(skills)) {
         const skillStmt = db.prepare('INSERT INTO skills (profile_id, skill_name) VALUES (?, ?)');
         for (const skill of skills) {
@@ -101,7 +77,6 @@ router.post('/profile', async (req, res) => {
         skillStmt.free();
       }
       
-      // Insert projects
       if (projects && Array.isArray(projects)) {
         const projectStmt = db.prepare('INSERT INTO projects (profile_id, title, description, link) VALUES (?, ?, ?, ?)');
         for (const project of projects) {
@@ -110,7 +85,6 @@ router.post('/profile', async (req, res) => {
         projectStmt.free();
       }
       
-      // Insert work
       if (work && Array.isArray(work)) {
         const workStmt = db.prepare('INSERT INTO work (profile_id, company, position, duration, description) VALUES (?, ?, ?, ?, ?)');
         for (const w of work) {
@@ -119,7 +93,6 @@ router.post('/profile', async (req, res) => {
         workStmt.free();
       }
       
-      // Insert links
       if (links) {
         const linksStmt = db.prepare('INSERT INTO links (profile_id, github, linkedin, portfolio) VALUES (?, ?, ?, ?)');
         linksStmt.run([profileId, links.github || '', links.linkedin || '', links.portfolio || '']);
@@ -142,15 +115,10 @@ router.post('/profile', async (req, res) => {
   }
 });
 
-/**
- * PUT /api/profile
- * Update existing profile
- */
 router.put('/profile', async (req, res) => {
   try {
     const { name, email, education, skills, projects, work, links } = req.body;
     
-    // Check if profile exists
     const existing = await dbGet('SELECT id FROM profile WHERE id = 1');
     if (!existing) {
       return res.status(404).json({ error: 'Profile not found. Use POST to create.' });
@@ -163,14 +131,12 @@ router.put('/profile', async (req, res) => {
     try {
       db.run('BEGIN TRANSACTION');
       
-      // Update profile
       if (name || email || education !== undefined) {
         const stmt = db.prepare('UPDATE profile SET name = COALESCE(?, name), email = COALESCE(?, email), education = COALESCE(?, education), updated_at = CURRENT_TIMESTAMP WHERE id = ?');
         stmt.run([name, email, education, profileId]);
         stmt.free();
       }
       
-      // Update skills (delete and re-insert)
       if (skills && Array.isArray(skills)) {
         const delStmt = db.prepare('DELETE FROM skills WHERE profile_id = ?');
         delStmt.run([profileId]);
@@ -183,7 +149,6 @@ router.put('/profile', async (req, res) => {
         skillStmt.free();
       }
       
-      // Update projects (delete and re-insert)
       if (projects && Array.isArray(projects)) {
         const delStmt = db.prepare('DELETE FROM projects WHERE profile_id = ?');
         delStmt.run([profileId]);
@@ -196,7 +161,6 @@ router.put('/profile', async (req, res) => {
         projectStmt.free();
       }
       
-      // Update work (delete and re-insert)
       if (work && Array.isArray(work)) {
         const delStmt = db.prepare('DELETE FROM work WHERE profile_id = ?');
         delStmt.run([profileId]);
@@ -209,7 +173,6 @@ router.put('/profile', async (req, res) => {
         workStmt.free();
       }
       
-      // Update links
       if (links) {
         const delStmt = db.prepare('DELETE FROM links WHERE profile_id = ?');
         delStmt.run([profileId]);
@@ -236,10 +199,6 @@ router.put('/profile', async (req, res) => {
   }
 });
 
-/**
- * GET /api/skills
- * Get list of all skills
- */
 router.get('/skills', async (req, res) => {
   try {
     const skills = await dbAll('SELECT DISTINCT skill_name FROM skills ORDER BY skill_name');
@@ -250,10 +209,6 @@ router.get('/skills', async (req, res) => {
   }
 });
 
-/**
- * GET /api/projects?q=query
- * Search projects by title or description
- */
 router.get('/projects', async (req, res) => {
   try {
     const { q } = req.query;
@@ -277,10 +232,6 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-/**
- * GET /api/search?q=query
- * Global search across profile, skills, projects, and work
- */
 router.get('/search', async (req, res) => {
   try {
     const { q } = req.query;
@@ -297,7 +248,6 @@ router.get('/search', async (req, res) => {
       work: []
     };
     
-    // Search in profile
     const profile = await dbGet(
       'SELECT name, email, education FROM profile WHERE name LIKE ? OR email LIKE ? OR education LIKE ?',
       [searchTerm, searchTerm, searchTerm]
@@ -306,21 +256,18 @@ router.get('/search', async (req, res) => {
       results.profile.push(profile);
     }
     
-    // Search in skills
     const skills = await dbAll(
       'SELECT DISTINCT skill_name FROM skills WHERE skill_name LIKE ?',
       [searchTerm]
     );
     results.skills = skills.map(s => s.skill_name);
     
-    // Search in projects
     const projects = await dbAll(
       'SELECT id, title, description, link FROM projects WHERE title LIKE ? OR description LIKE ?',
       [searchTerm, searchTerm]
     );
     results.projects = projects;
     
-    // Search in work
     const work = await dbAll(
       'SELECT company, position, duration, description FROM work WHERE company LIKE ? OR position LIKE ? OR description LIKE ?',
       [searchTerm, searchTerm, searchTerm]
@@ -334,10 +281,6 @@ router.get('/search', async (req, res) => {
   }
 });
 
-/**
- * GET /api/health
- * Health check endpoint
- */
 router.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'API is healthy' });
 });

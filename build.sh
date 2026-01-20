@@ -1,5 +1,4 @@
 #!/bin/bash
-# Build script for Render
 
 echo "Installing backend dependencies..."
 cd backend

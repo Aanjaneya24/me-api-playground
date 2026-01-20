@@ -66,7 +66,7 @@ function App() {
   if (loading) {
     return (
       <div className="container">
-        <div className="loading">⏳ Loading profile...</div>
+        <div className="loading">Loading profile...</div>
       </div>
     );
   }
@@ -83,7 +83,7 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>🚀 Me-API Playground</h1>
+        <h1>Me-API Playground</h1>
         <p className="subtitle">Interactive Profile Viewer</p>
         <div className="api-info">
           <span className="api-label">API Endpoint:</span>
@@ -96,7 +96,7 @@ function App() {
           <input
             type="text"
             className="search-input"
-            placeholder="🔍 Search projects..."
+            placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -136,13 +136,13 @@ function ProfileDisplay({ profile }) {
           <div className="profile-avatar">{initials}</div>
           <div className="profile-info">
             <h2>{profile.name}</h2>
-            <p>📧 {profile.email}</p>
+            <p> {profile.email}</p>
           </div>
         </div>
         
         {profile.education && (
           <div className="section">
-            <h3>🎓 Education</h3>
+            <h3> Education</h3>
             <p>{profile.education}</p>
           </div>
         )}
@@ -150,7 +150,7 @@ function ProfileDisplay({ profile }) {
 
       {profile.skills && profile.skills.length > 0 && (
         <div className="section">
-          <h3>🛠️ Skills</h3>
+          <h3>Skills</h3>
           <div className="skills-grid">
             {profile.skills.map((skill, index) => (
               <span key={index} className="skill-tag">{skill}</span>
@@ -161,7 +161,7 @@ function ProfileDisplay({ profile }) {
 
       {profile.projects && profile.projects.length > 0 && (
         <div className="section">
-          <h3>🚀 Projects</h3>
+          <h3>Projects</h3>
           <div className="projects-grid">
             {profile.projects.map((project, index) => (
               <div key={index} className="project-card">
@@ -169,7 +169,7 @@ function ProfileDisplay({ profile }) {
                 <p>{project.description || 'No description available'}</p>
                 {project.link && (
                   <a href={project.link} className="project-link" target="_blank" rel="noopener noreferrer">
-                    🔗 View Project
+                    View Project
                   </a>
                 )}
               </div>
@@ -180,7 +180,7 @@ function ProfileDisplay({ profile }) {
 
       {profile.work && profile.work.length > 0 && (
         <div className="section">
-          <h3>💼 Work Experience</h3>
+          <h3>Work Experience</h3>
           {profile.work.map((work, index) => (
             <div key={index} className="work-item">
               <h4>{work.position}</h4>
@@ -194,7 +194,7 @@ function ProfileDisplay({ profile }) {
 
       {profile.links && (profile.links.github || profile.links.linkedin || profile.links.portfolio) && (
         <div className="section">
-          <h3>🔗 Links</h3>
+          <h3>Links</h3>
           <div className="links-section">
             {profile.links.github && (
               <a href={profile.links.github} className="link-button" target="_blank" rel="noopener noreferrer">
@@ -233,7 +233,7 @@ function SearchResults({ results, query, onClear }) {
 
   return (
     <div className="section">
-      <h3>🔍 Search Results for "{query}"</h3>
+      <h3>Search Results for "{query}"</h3>
       <p style={{ marginBottom: '20px', color: '#666' }}>Found {results.length} project(s)</p>
       <div className="projects-grid">
         {results.map((project, index) => (
@@ -242,7 +242,7 @@ function SearchResults({ results, query, onClear }) {
             <p>{project.description || 'No description available'}</p>
             {project.link && (
               <a href={project.link} className="project-link" target="_blank" rel="noopener noreferrer">
-                🔗 View Project
+                View Project
               </a>
             )}
           </div>

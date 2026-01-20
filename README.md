@@ -2,7 +2,7 @@
 
 A personal profile API playground that stores candidate information in a SQLite database and exposes it via a RESTful API with a minimal frontend interface.
 
-## 📋 Project Overview
+## Project Overview
 
 This project is a full-stack application built for an internship assessment. It demonstrates:
 - Building RESTful APIs with Node.js and Express
@@ -11,7 +11,7 @@ This project is a full-stack application built for an internship assessment. It 
 - CRUD operations and query endpoints
 - Clean, maintainable code architecture
 
-## 🏗️ Architecture
+## Architecture
 
 ### Tech Stack
 - **Backend**: Node.js + Express.js
@@ -51,7 +51,7 @@ Database Module (db.js)
 SQLite Database (profile.db)
 ```
 
-## 📊 Database Schema
+## Database Schema
 
 ### Tables
 
@@ -97,7 +97,7 @@ SQLite Database (profile.db)
 - One profile has many work experiences (1:N)
 - One profile has one links record (1:1)
 
-## 🚀 API Endpoints
+## API Endpoints
 
 ### Profile Management
 
@@ -237,7 +237,7 @@ Returns API health status (always returns 200).
 }
 ```
 
-## 🛠️ Local Setup Instructions
+## Local Setup Instructions
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -295,7 +295,7 @@ open frontend/index.html
 
 **Note**: If deploying to a hosting service, update the `API_BASE_URL` variable in `index.html` to point to your deployed backend URL.
 
-## 📝 Sample cURL Commands
+## Sample cURL Commands
 
 ### Test Health Endpoint
 ```bash
@@ -360,7 +360,7 @@ curl -X PUT http://localhost:3000/api/profile \
   }'
 ```
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 1. **Single Profile**: Currently supports only one profile (ID = 1). The system is designed for personal use, not multi-user scenarios.
 
@@ -386,7 +386,7 @@ curl -X PUT http://localhost:3000/api/profile \
 
 12. **Database Location**: SQLite database file is stored in the backend directory. For production, consider dedicated storage.
 
-## 🚀 Deployment Considerations
+## Deployment Considerations
 
 ### Backend Deployment (e.g., Render, Railway, Heroku)
 1. Push code to GitHub repository
@@ -405,19 +405,17 @@ curl -X PUT http://localhost:3000/api/profile \
 - Consider using volume mounts or persistent storage
 - For scale, migrate to PostgreSQL or MySQL
 
-## 📄 Resume Link
+## Resume Link
 
 **[INSERT YOUR RESUME LINK HERE]**
 
 Example: `https://drive.google.com/file/d/YOUR_RESUME_ID/view`
 
-## 📞 Contact
+## Contact
 
 For questions or issues with this project:
 - **Email**: [Your email from profile]
 - **GitHub**: [Your GitHub from profile]
 - **LinkedIn**: [Your LinkedIn from profile]
 
----
-
-**For Internship Assessment • Me-API Playground v1.0**
+For Internship Assessment - Me-API Playground v1.0

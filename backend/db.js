@@ -1,8 +1,3 @@
-/**
- * Database Connection Module
- * Handles SQLite database connection and query helpers using sql.js
- */
-
 const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
@@ -10,9 +5,6 @@ const path = require('path');
 const DB_PATH = path.join(__dirname, 'profile.db');
 let SQL = null;
 
-/**
- * Initialize SQL.js
- */
 async function initDB() {
   if (!SQL) {
     SQL = await initSqlJs();
@@ -20,10 +12,6 @@ async function initDB() {
   return SQL;
 }
 
-/**
- * Get database connection
- * @returns {Promise<Database>} Database connection
- */
 async function getDB() {
   await initDB();
   
@@ -35,22 +23,12 @@ async function getDB() {
   return new SQL.Database();
 }
 
-/**
- * Save database to file
- * @param {Database} db - Database instance
- */
 function saveDB(db) {
   const data = db.export();
   const buffer = Buffer.from(data);
   fs.writeFileSync(DB_PATH, buffer);
 }
 
-/**
- * Execute a query that returns all rows
- * @param {string} query - SQL query
- * @param {Array} params - Query parameters
- * @returns {Promise<Array>} Array of rows
- */
 async function dbAll(query, params = []) {
   const db = await getDB();
   try {
@@ -69,12 +47,6 @@ async function dbAll(query, params = []) {
   }
 }
 
-/**
- * Execute a query that returns a single row
- * @param {string} query - SQL query
- * @param {Array} params - Query parameters
- * @returns {Promise<Object|undefined>} Single row or undefined
- */
 async function dbGet(query, params = []) {
   const db = await getDB();
   try {
@@ -93,12 +65,6 @@ async function dbGet(query, params = []) {
   }
 }
 
-/**
- * Execute a query that modifies data (INSERT, UPDATE, DELETE)
- * @param {string} query - SQL query
- * @param {Array} params - Query parameters
- * @returns {Promise<Object>} Result with lastID and changes
- */
 async function dbRun(query, params = []) {
   const db = await getDB();
   try {
@@ -107,7 +73,6 @@ async function dbRun(query, params = []) {
     stmt.step();
     stmt.free();
     
-    // Get last insert rowid
     const lastIDStmt = db.prepare('SELECT last_insert_rowid() as id');
     lastIDStmt.step();
     const lastID = lastIDStmt.getAsObject().id;
@@ -123,11 +88,6 @@ async function dbRun(query, params = []) {
   }
 }
 
-/**
- * Execute multiple statements in a transaction
- * @param {Function} callback - Callback function that receives db instance
- * @returns {Promise<any>} Result from callback
- */
 async function dbTransaction(callback) {
   const db = await getDB();
   try {

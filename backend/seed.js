@@ -1,76 +1,70 @@
-/**
- * Database Seed Script
- * Populates the SQLite database with sample candidate profile data
- */
-
 const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = path.join(__dirname, 'profile.db');
 
-// Sample data (REPLACE WITH YOUR ACTUAL INFORMATION)
 const sampleProfile = {
-  name: "John Doe",  // REPLACE: Your full name
-  email: "john.doe@example.com",  // REPLACE: Your email
-  education: "B.Tech in Computer Science, XYZ University (2020-2024)"  // REPLACE: Your education
+  name: "Aanjaneya Pandey",
+  email: "pandeyaanjaneya76@gmail.com",
+  education: "National Institute of Technology Delhi - B.Tech in Electronics and Communication Engineering with Minor in AI & ML, Graduating 2027 (CGPA: 9.0/10)"
 };
 
 const sampleSkills = [
+  "C",
+  "C++",
+  "Python",
   "JavaScript",
+  "React.js",
   "Node.js",
   "Express.js",
-  "Python",
-  "SQL",
-  "SQLite",
-  "REST APIs",
-  "Git",
-  "HTML/CSS",
-  "Problem Solving"
+  "MongoDB",
+  "RESTful APIs",
+  "Docker",
+  "Git/GitHub",
+  "Zephyr RTOS",
+  "Data Structures & Algorithms",
+  "OOPS",
+  "Computer Networks",
+  "Operating Systems",
+  "DBMS"
 ];
 
 const sampleProjects = [
   {
-    title: "E-commerce API",
-    description: "Built a RESTful API for an online store with user authentication, product management, and order processing",
-    link: "https://github.com/yourusername/ecommerce-api"  // REPLACE: Your project link
+    title: "EduTrack - Smart School Management System",
+    description: "Developed a MERN-based analytics platform for statistical analysis of student performance and attendance. Implemented RBAC and secure REST APIs to enable controlled data access and efficient metric aggregation. Deployed on cloud infrastructure supporting 100+ concurrent requests for real-time analytics.",
+    link: "https://github.com/Aanjaneya24/EduTrack-Smart-School-Management-System"
   },
   {
-    title: "Weather Dashboard",
-    description: "Created a weather forecasting application using third-party APIs with data visualization",
-    link: "https://github.com/yourusername/weather-dashboard"  // REPLACE: Your project link
-  },
-  {
-    title: "Task Manager",
-    description: "Developed a full-stack task management system with real-time updates and user collaboration features",
-    link: "https://github.com/yourusername/task-manager"  // REPLACE: Your project link
+    title: "HireSense - AI-Powered Job Portal",
+    description: "Engineered a full-stack AI-powered job portal with recruiter dashboards and end-to-end application tracking. Integrated LLaMA-based AI via Groq API to generate job descriptions in <2s, reducing manual effort by 60%. Implemented JWT-based authentication and scalable MongoDB schemas.",
+    link: "https://github.com/Aanjaneya24/HireSense"
   }
 ];
 
 const sampleWork = [
   {
-    company: "Tech Startup Inc.",
-    position: "Software Development Intern",
-    duration: "Jun 2023 - Aug 2023",
-    description: "Worked on backend services, implemented REST APIs, and optimized database queries"
+    company: "IIT (BHU), Varanasi",
+    position: "Embedded Systems, Optimization & AI Research Intern",
+    duration: "June 2025 - July 2025",
+    description: "Conducted performance modelling and statistical analysis of a LoRaWAN-based communication stack (nRF54L15 & SX1261), leading to a 30% improvement in network efficiency. Developed and optimized low-level drivers in C (Zephyr RTOS) and applied computational efficiency techniques, improving system reliability by 20%. Designed and evaluated OTAA-based authentication mechanisms using probabilistic modelling, extending the wireless range beyond 500m."
   },
   {
-    company: "University Coding Club",
-    position: "Technical Lead",
-    duration: "Jan 2022 - May 2023",
-    description: "Led a team of 10 students, organized coding workshops, and mentored junior members"
+    company: "Think India Club, NIT Delhi",
+    position: "Active Member",
+    duration: "2023 - Present",
+    description: "Organized and led 5+ seminars and technical discussions, engaging 50+ participants. Collaborated with peers to conduct technical workshops and events, improving teamwork and hands-on learning."
   }
 ];
 
 const sampleLinks = {
-  github: "https://github.com/yourusername",  // REPLACE: Your GitHub
-  linkedin: "https://linkedin.com/in/yourprofile",  // REPLACE: Your LinkedIn
-  portfolio: "https://yourportfolio.com"  // REPLACE: Your portfolio
+  github: "https://github.com/Aanjaneya24",
+  linkedin: "https://www.linkedin.com/in/aanjaneya-pandey-9715b2335/",
+  portfolio: "https://portfolio-inky-chi-6ru5lsgmzu.vercel.app/"
 };
 
-// Initialize and seed database
 async function seedDatabase() {
-  // Remove existing database if it exists
   if (fs.existsSync(DB_PATH)) {
     fs.unlinkSync(DB_PATH);
     console.log('Removed existing database');
@@ -81,24 +75,20 @@ async function seedDatabase() {
   console.log('Connected to SQLite database');
 
   try {
-    // Read and execute schema
     const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
     db.run(schema);
     console.log('Database schema created successfully');
     
-    // Insert profile
     const insertProfile = db.prepare(`INSERT INTO profile (name, email, education) VALUES (?, ?, ?)`);
     insertProfile.run([sampleProfile.name, sampleProfile.email, sampleProfile.education]);
     insertProfile.free();
     
-    // Get profile ID
     const idStmt = db.prepare('SELECT last_insert_rowid() as id');
     idStmt.step();
     const profileId = idStmt.getAsObject().id;
     idStmt.free();
     console.log(`Profile inserted with ID: ${profileId}`);
     
-    // Insert skills
     const insertSkill = db.prepare(`INSERT INTO skills (profile_id, skill_name) VALUES (?, ?)`);
     for (const skill of sampleSkills) {
       insertSkill.run([profileId, skill]);
@@ -106,7 +96,6 @@ async function seedDatabase() {
     insertSkill.free();
     console.log(`Inserted ${sampleSkills.length} skills`);
     
-    // Insert projects
     const insertProject = db.prepare(`INSERT INTO projects (profile_id, title, description, link) VALUES (?, ?, ?, ?)`);
     for (const project of sampleProjects) {
       insertProject.run([profileId, project.title, project.description, project.link]);
@@ -114,7 +103,6 @@ async function seedDatabase() {
     insertProject.free();
     console.log(`Inserted ${sampleProjects.length} projects`);
     
-    // Insert work experience
     const insertWork = db.prepare(`INSERT INTO work (profile_id, company, position, duration, description) VALUES (?, ?, ?, ?, ?)`);
     for (const work of sampleWork) {
       insertWork.run([profileId, work.company, work.position, work.duration, work.description]);
@@ -122,19 +110,17 @@ async function seedDatabase() {
     insertWork.free();
     console.log(`Inserted ${sampleWork.length} work experiences`);
     
-    // Insert links
     const insertLinks = db.prepare(`INSERT INTO links (profile_id, github, linkedin, portfolio) VALUES (?, ?, ?, ?)`);
     insertLinks.run([profileId, sampleLinks.github, sampleLinks.linkedin, sampleLinks.portfolio]);
     insertLinks.free();
     console.log('Links inserted successfully');
     
-    // Save database to file
     const data = db.export();
     const buffer = Buffer.from(data);
     fs.writeFileSync(DB_PATH, buffer);
     
     db.close();
-    console.log('\n✅ Database seeded successfully!');
+    console.log('\nDatabase seeded successfully!');
     console.log('Database file created at:', DB_PATH);
   } catch (error) {
     console.error('Error seeding database:', error);
@@ -143,5 +129,4 @@ async function seedDatabase() {
   }
 }
 
-// Run seeding
 seedDatabase();
